@@ -1,6 +1,8 @@
 #include<iostream>
 #include<string>
 #include<iomanip>
+#include <fstream>
+#include <sstream>
 
 using namespace std;
 
@@ -27,16 +29,23 @@ class course
 bool Isint(float s)
 {
     if(s - (int)s == 0)
-    {
-        return true;
+    {return true;}
+    else{return false;}
+}
+
+void CinFromFile(const string& filename) {
+    ifstream file(filename);
+    if (!file.is_open()) {
+        cerr << "无法打开文件: " << filename << endl;
+        return;
     }
-    else
-    {
-        return false;
-    }
+    stringstream buffer;
+    buffer << file.rdbuf();
+    cin.rdbuf(buffer.rdbuf());
 }
 int main()
-{
+{   
+    CinFromFile("test.txt");
     course cou[3];
     student stu[10];
     for(int i=0;i<10;i++)
