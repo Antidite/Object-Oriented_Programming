@@ -37,27 +37,24 @@ class allocator
     {
         return std::addressof(_Val);
     }
-
-    void deallocate(pointer p, size_type n)
-    {
-        if (!p || n == 0) return;
-        const size_type bytes = n * sizeof(value_type);
-
-        if (bytes > MAX_BYTES) {       
-            ::operator delete(p);
+    void deallocate(pointer _Ptr, size_type _Count)
+    {       
+        if(_Ptr == nullptr || _Count == 0)
             return;
-        }
-        MemoryPool::instance().deallocate(p, bytes);
-    }
-
-    pointer allocate(size_type n)
+        size_type bytes = _Count * sizeof(value_type);
+        MemoryPool::instance().deallocate(_Ptr, bytes);
+        return;
+    };
+    pointer allocate(size_type _Count)
     {
-        const size_type bytes = n * sizeof(value_type);
-        if (bytes > MAX_BYTES)           
-            return static_cast<pointer>(::operator new(bytes));
-        return static_cast<pointer>(MemoryPool::instance().allocate(bytes));
-    }
-
+        size_type bytes = _Count * sizeof(value_type);
+        void* p = MemoryPool::instance().allocate(bytes);
+        if (p == nullptr)
+        {
+            throw std::bad_alloc();
+        }
+        return static_cast<pointer>(p);
+    };
     template<class _Uty> 
     void destroy(_Uty *_Ptr)
     {

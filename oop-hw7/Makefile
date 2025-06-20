@@ -2,7 +2,7 @@
 
 # Compiler and flags
 CXX      := g++
-CXXFLAGS := -std=c++17 -O3 -Wall -I. -IMy_code -ITeacher_code
+CXXFLAGS := -std=c++17 -O2 -Wall -I. -IMy_code -ITeacher_code
 
 # Allow overriding allocator mode: 1=StudentAllocator, 2=std::allocator
 # Default to mode 1
@@ -16,31 +16,32 @@ TARGET := test_app
 SRCS := testallocator.cpp
 OBJS := $(SRCS:.cpp=.o)
 
-.PHONY: all build clean run1 run2 runall
+.PHONY: all clean run1 run2 runall
 
-# Default: run both modes
-all: runall
+# Build the application
+all: $(TARGET)
 
-# Clean up build artifacts
+$(TARGET): $(OBJS)
+	$(CXX) $(CXXFLAGS) $(OBJS) -o $(TARGET)
+
+# Compile sources
+%.o: %.cpp allocator_selector.h
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# Clean up
 clean:
-	rm -f test_app
+	rm -f $(OBJS) $(TARGET)
 
-# Compile & run with allocator mode 1
-env1 = -std=c++17 -O3 -Wall -I. -IMy_code -ITeacher_code -DALLOCATOR_MODE=1
-run1:
-	$(CXX) $(env1) testallocator.cpp -o test_app
-	@echo "=== Running with mode 1 (StudentAllocator) ==="
-	@./test_app
+# Run with allocator mode 1
+run1: clean all
+	@echo "Running with mode 1 (StudentAllocator)"
+	@./$(TARGET)
 
-# Compile & run with allocator mode 2
-env2 = -std=c++17 -O3 -Wall -I. -IMy_code -ITeacher_code -DALLOCATOR_MODE=2
-run2:
-	$(CXX) $(env2) testallocator.cpp -o test_app
-	@echo "=== Running with mode 2 (std::allocator) ==="
-	@./test_app
+# Run with allocator mode 2
+run2: clean all ALLOCATOR_MODE=2
+	@echo "Running with mode 2 (std::allocator)"
+	@./$(TARGET)
 
 # Run both modes sequentially
-runall: clean run1 run2
-	@echo "=== Completed runall: modes 1 and 2 ==="
-
-
+runall: run1 run2
+	@echo "Completed both run1 and run2"

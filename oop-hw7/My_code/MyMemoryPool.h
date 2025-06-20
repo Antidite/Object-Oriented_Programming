@@ -55,10 +55,10 @@ private:
         }
     }
     struct FreeNode { FreeNode* next; };
-    static constexpr unsigned bucket_count = 512;
+    static constexpr unsigned bucket_count = 128;
     static constexpr std::size_t MaxBlockSize = 256;
-    static constexpr std::array<std::size_t,10> bucket_scale = {8,16,24,32,40,48,56,64,128,256};
-    static constexpr std::size_t bucket_kind = 10;
+    static constexpr std::array<std::size_t,6> bucket_scale = {8,16,32,64,128,256};
+    static constexpr std::size_t bucket_kind = 6;
     std::array<FreeNode*,bucket_kind> free_head;
     std::array<std::vector<char*>,bucket_kind> slabs;
     static unsigned calculate_bucket_index(std::size_t data_size){

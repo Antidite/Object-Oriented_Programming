@@ -11,15 +11,10 @@
   #define MyAllocator    StudentAllocator
   #define AllocatorLabel "StudentAllocator"
 #elif ALLOCATOR_MODE == 2
-   #if defined(_WIN32) || defined(_WIN64)
-    #include "Teacher_code/stdafx.h"
-    #include "Teacher_code/myallocator.h"
-    #define MyAllocator    std::allocator
-    #define AllocatorLabel "std::allocator (Windows)"
-  #else
-    #define MyAllocator    std::allocator
-    #define AllocatorLabel "std::allocator"
-  #endif
+  #include "Teacher_code/stdafx.h"
+  #include "Teacher_code/myallocator.h"
+  #define MyAllocator    std::allocator
+  #define AllocatorLabel "std::allocator"
 #else
   #error "ALLOCATOR_MODE 必须定义为 1 或 2"
 #endif

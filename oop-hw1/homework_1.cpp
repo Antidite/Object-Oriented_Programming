@@ -1,6 +1,9 @@
 #include<iostream>
 #include<string>
 #include<iomanip>
+#include <fstream>
+#include <sstream>
+#include <cstdio>
 
 using namespace std;
 
@@ -27,16 +30,13 @@ class course
 bool Isint(float s)
 {
     if(s - (int)s == 0)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    {return true;}
+    else{return false;}
 }
+
 int main()
-{
+{   
+    freopen("test.txt", "r", stdin);
     course cou[3];
     student stu[10];
     for(int i=0;i<10;i++)
