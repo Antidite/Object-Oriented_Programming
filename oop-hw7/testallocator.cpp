@@ -94,10 +94,13 @@ protected:
 };
 
 #define TESTSIZE 10000
+#define PICKSIZE 1000
 
 int main()
 {
-	auto t0 = std::chrono::high_resolution_clock::now();
+	using Clock = std::chrono::high_resolution_clock;
+    using us    = std::chrono::microseconds;
+	auto t0 = Clock::now();
 	vecWrapper **testVec;
 	testVec = new vecWrapper*[TESTSIZE];
 
@@ -116,14 +119,21 @@ int main()
 		vecWrapperT<myObject> *pNewVec = new vecWrapperT<myObject>(CLASS, new std::vector<myObject, MyAllocator<myObject>>(tSize));
 		testVec[TESTSIZE - 4 + i] = (vecWrapper *)pNewVec;
 	}
-	
+	auto t1 = Clock::now();
+    std::cout << "Test Allocator: "
+              << std::chrono::duration_cast<us>(t1 - t0).count()
+              << " µs\n";
 	//test resize
-	for (int i = 0; i < 100; i++)
+	for (int i = 0; i < PICKSIZE; i++)
 	{
 		tIndex = (int)((float)rand() / (float)RAND_MAX * (float)TESTSIZE);
 		tSize = (int)((float)rand() / (float)RAND_MAX * (float)TESTSIZE);
 		testVec[tIndex]->resize(tSize);
 	}
+	auto t2 = Clock::now();
+    std::cout << "Test Resize: "
+              << std::chrono::duration_cast<us>(t2 - t1).count()
+              << " µs\n";
 
 	//test assignment
 	tIndex = (int)((float)rand() / (float)RAND_MAX * (TESTSIZE - 4 - 1));
@@ -144,14 +154,15 @@ int main()
 
 	for (int i = 0; i < TESTSIZE; i++)
 		delete testVec[i];
-
+	auto t3 = Clock::now();
+    std::cout << "Test Assignment: "
+              << std::chrono::duration_cast<us>(t3 - t2).count()
+              << " µs" << "\n";
 	delete []testVec;
-	auto t1 = std::chrono::high_resolution_clock::now();
-    auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0).count();
 
-    std::cout << AllocatorLabel << ": total elapsed = " << ms << " ms\n\n";
-	system("pause");
+	auto t4 = Clock::now();
+    std::cout << AllocatorLabel <<"Totally: "
+              << std::chrono::duration_cast<us>(t4 - t0).count()
+              << " µs\n";
     return 0;
-	
 }
-
